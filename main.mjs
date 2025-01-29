@@ -223,7 +223,9 @@ app.get('/', requireAuth, (req, res) => {
     <div>
         <label>Env Vars (KEY=VALUE形式、改行区切り):</label><br/>
         <textarea name="envVars" rows="5" cols="30" placeholder="EXAMPLE_API_KEY=12345&#10;ANOTHER_VAR=HelloWorld"></textarea>
-        <textarea name="host"></textarea>
+    </div>
+    <div>
+        <textarea name="host" placeholder="hoge.miragex.local"></textarea>
     </div>
     <button type="submit">Deploy</button>
     </form>
@@ -288,6 +290,7 @@ app.get('/pods', requireAuth, async (req, res) => {
     try {
         const podsResponse = await k8sCore.listNamespacedPod({ namespace: 'default' });
         const serviceResponse = await k8sCore.listNamespacedService({ namespace: "default" })
+        const ingressResponse = await k8sNetApi.listNamespacedIngress({ namespace: "default" })
         const pods = podsResponse.items;
 
         let html = `
@@ -299,11 +302,11 @@ app.get('/pods', requireAuth, async (req, res) => {
         pods.forEach(pod => {
             const name = pod.metadata.name;
             const phase = pod.status.phase;
-            const s = serviceResponse.items.find(f => f.metadata.name == name)
+            const host = ingressResponse.items.find(i => i.metadata.name === name)?.spec.rules[0].host
 
             html += `
         <li>
-          <strong>${name}  PORT: ${s?.spec.ports[0].nodePort} ==> 3000</strong> 
+          <strong>${name}  HOST: ${host}</strong> 
           (status: ${phase}) 
           [<a href="/pods/${name}/logs">Logs</a>]
           [<a href="/pods/${name}/delete">Delete</a>]
@@ -343,6 +346,7 @@ app.get('/pods/:name/delete', requireAuth, async (req, res) => {
     try {
         await k8sCore.deleteNamespacedPod({ namespace: 'default', name: podName });
         await k8sCore.deleteNamespacedService({ namespace: "default", name: podName })
+        await k8sNetApi.deleteNamespacedIngress({ namespace: "default", name: podName })
         res.redirect('/pods');
     } catch (error) {
         console.error('Error deleting pod:', error);
