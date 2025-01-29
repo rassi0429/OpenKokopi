@@ -2,10 +2,7 @@ import express from 'express';
 import session from 'express-session';
 import { KubeConfig, CoreV1Api, NetworkingV1Api, V1SecretList, V1ContainerPort } from '@kubernetes/client-node';
 
-/**
- * Podを作成するためのマニフェストを生成する関数
- * (initContainer で git clone → メインコンテナで npm install & npm run start)
- */
+
 function createPodSpec(repoUrl, envVars = {}) {
     const repositoryName = repoUrl.split('/').pop().split('.').shift();
     const podName = `${repositoryName}-${Date.now()}`;
