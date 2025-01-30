@@ -36,7 +36,7 @@ function createPodSpec(repoUrl, envVars = {}) {
                     image: 'alpine/git:latest',
                     command: ['sh', '-c'],
                     args: [
-                        `rm -rf /app/* && git clone ${repoUrl} /app`
+                        `[ -d "/app/.git" ] && (echo "Repository already exists. Pulling latest changes..." && git -C /app pull) || (echo "Repository not found. Cloning..." && git clone ${repoUrl} /app)`
                     ],
                     volumeMounts: [
                         {
