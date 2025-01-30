@@ -288,6 +288,7 @@ app.get('/pods', requireAuth, async (req, res) => {
         const podsResponse = await k8sCore.listNamespacedPod({ namespace: 'default' });
         const serviceResponse = await k8sCore.listNamespacedService({ namespace: "default" })
         const ingressResponse = await k8sNetApi.listNamespacedIngress({ namespace: "default" })
+        console.log(JSON.stringify(ingressResponse.items, null, 2))
         const pods = podsResponse.items;
 
         let html = `
@@ -298,7 +299,6 @@ app.get('/pods', requireAuth, async (req, res) => {
 
         pods.forEach(pod => {
             const name = pod.metadata.name;
-            console.log(name)
             const phase = pod.status.phase;
             const host = ingressResponse.items.find(i => i.metadata.name === name)?.spec.rules[0].host
 
