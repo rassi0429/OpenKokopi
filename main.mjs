@@ -36,7 +36,7 @@ function createPodSpec(repoUrl, envVars = {}) {
                     image: 'alpine/git:latest',
                     command: ['sh', '-c'],
                     args: [
-                        `git clone ${repoUrl} /app`
+                        `rm -rf /app && git clone ${repoUrl} /app`
                     ],
                     volumeMounts: [
                         {
@@ -198,9 +198,6 @@ function requireAuth(req, res, next) {
 const kc = new KubeConfig();
 // (1) ローカル開発で~/.kube/configを使う場合
 kc.loadFromDefault()
-
-// (2) Kubernetes内で動かす場合 (ServiceAccount)
-// kc.loadFromCluster();
 
 const k8sCore = kc.makeApiClient(CoreV1Api);
 const k8sNetApi = kc.makeApiClient(NetworkingV1Api);
