@@ -197,7 +197,7 @@ function requireAuth(req, res, next) {
 // ------------------------------------
 const kc = new KubeConfig();
 // (1) ローカル開発で~/.kube/configを使う場合
-kc.loadFromDefault();
+kc.loadFromFile("./config");
 
 // (2) Kubernetes内で動かす場合 (ServiceAccount)
 // kc.loadFromCluster();
