@@ -33,7 +33,7 @@ function createPodSpec(repoUrl, envVars = {}) {
             initContainers: [
                 {
                     name: 'git-clone',
-                    image: 'ubuntu:latest',
+                    image: 'alpine/git:latest',
                     command: ['bash', '-c'],
                     args: [
                         `[ -d "/app/.git" ] && (echo "Repository already exists. Pulling latest changes..." && git -C /app pull) || (echo "Repository not found. Cloning..." && git clone ${repoUrl} /app)`
