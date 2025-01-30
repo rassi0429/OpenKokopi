@@ -33,8 +33,8 @@ function createPodSpec(repoUrl, envVars = {}) {
             initContainers: [
                 {
                     name: 'git-clone',
-                    image: 'alpine/git:latest',
-                    command: ['sh', '-c'],
+                    image: 'ubuntu:latest',
+                    command: ['bash', '-c'],
                     args: [
                         `[ -d "/app/.git" ] && (echo "Repository already exists. Pulling latest changes..." && git -C /app pull) || (echo "Repository not found. Cloning..." && git clone ${repoUrl} /app)`
                     ],
@@ -49,9 +49,9 @@ function createPodSpec(repoUrl, envVars = {}) {
             containers: [
                 {
                     name: 'node-bot',
-                    image: 'node:18-alpine',
+                    image: 'node:18',
                     workingDir: '/app',
-                    command: ['sh', '-c'],
+                    command: ['bash', '-c'],
                     args: [
                         'npm install && npm run build && npm run start'
                     ],
