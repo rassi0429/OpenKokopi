@@ -23,7 +23,7 @@ function createPodSpec(repoUrl, envVars = {}) {
             }
         },
         spec: {
-            restartPolicy: 'Never',
+            restartPolicy: 'Always',
             volumes: [
                 {
                     name: 'app-volume',
