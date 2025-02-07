@@ -1,16 +1,21 @@
 import express from 'express';
 import session from 'express-session';
-import { KubeConfig, CoreV1Api, NetworkingV1Api, V1SecretList, V1ContainerPort } from '@kubernetes/client-node';
+import { KubeConfig, CoreV1Api, NetworkingV1Api} from '@kubernetes/client-node';
 
+declare module 'express-session' {
+    interface SessionData {
+        user: { username: string };
+    }
+}
 
-function createPodSpec(repoUrl, envVars = {}) {
-    const repositoryName = repoUrl.split('/').pop().split('.').shift();
+function createPodSpec(repoUrl: string, envVars = {}) {
+    const repositoryName = repoUrl.split('/').pop()?.split('.').shift()
     const podName = `${repositoryName}-${Date.now()}`;
 
     // 受け取った envVars オブジェクトを k8s 用の配列形式に変換
     const envArray = Object.entries(envVars).map(([key, value]) => ({
         name: key,
-        value: value
+        value: String(value)
     }));
 
     return {
@@ -71,7 +76,7 @@ function createPodSpec(repoUrl, envVars = {}) {
     };
 }
 
-function createServiceSpec(podName, port) {
+function createServiceSpec(podName: string, port: number) {
     return {
         apiVersion: 'v1',
         kind: 'Service',
@@ -93,7 +98,7 @@ function createServiceSpec(podName, port) {
     };
 }
 
-function createIngressSpec(podName, host) {
+function createIngressSpec(podName: string, host: string) {
 
     return {
         apiVersion: 'networking.k8s.io/v1',
@@ -185,7 +190,7 @@ app.get('/logout', (req, res) => {
 });
 
 // 認証チェック用ミドルウェア
-function requireAuth(req, res, next) {
+function requireAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
     if (!req.session.user) {
         return res.redirect('/login');
     }
@@ -208,7 +213,7 @@ const k8sNetApi = kc.makeApiClient(NetworkingV1Api);
 app.get('/', requireAuth, (req, res) => {
     // デプロイフォームと、Podの一覧へのリンクを表示
     res.send(`
-    <h1>Welcome, ${req.session.user.username}</h1>
+    <h1>Welcome, ${req.session.user?.username}</h1>
     <p>Deploy a new MirageX app:</p>
     <form method="POST" action="/deploy">
     <div>
@@ -248,20 +253,20 @@ app.post('/deploy', requireAuth, async (req, res) => {
         const response = await k8sCore.createNamespacedPod({ namespace: 'default', body: podManifest });
         const serviceResponse = await k8sCore.createNamespacedService({ namespace: 'default', body: serviceManifest });
         const ingressResponse = await k8sNetApi.createNamespacedIngress({ namespace: 'default', body: ingressManifest })
-        const createdPodName = response.metadata.name;
+        const createdPodName = response.metadata?.name;
         res.send(`
       <p>Pod created successfully: <strong>${createdPodName}</strong></p>
-      <p>port is ${serviceResponse.spec.ports[0].nodePort}<p>
       <p><a href="/pods">Go to Pods list</a></p>
     `);
     } catch (error) {
         console.error('Error creating Pod:', error);
-        res.status(500).send(`Error creating Pod: ${error.message}`);
+        const errorMessage = (error as Error).message;
+        res.status(500).send(`Error fetching logs: ${errorMessage}`);
     }
 });
 
-function parseEnvVars(envString) {
-    const envObj = {};
+function parseEnvVars(envString: string) {
+    const envObj: { [key: string]: string } = {};
     // 1行ごとに分割し、"=" 区切りでキーと値を取り出す
     envString.split('\n').forEach(line => {
         const trimmed = line.trim();
@@ -295,10 +300,10 @@ app.get('/pods', requireAuth, async (req, res) => {
     `;
 
         pods.forEach(pod => {
-            const name = pod.metadata.name;
-            const phase = pod.status.phase;
-            const host = ingressResponse.items.find(i => i.metadata.name === name)?.spec.rules[0].host
-
+            const name = pod.metadata?.name || 'unknown';
+            const phase = pod.status?.phase || 'unknown';
+            const host = ingressResponse.items.find(i => i.metadata?.name === name)?.spec?.rules?.[0]?.host;
+            
             html += `
         <li>
           <strong>${name}  HOST: ${host}</strong> 
@@ -313,7 +318,8 @@ app.get('/pods', requireAuth, async (req, res) => {
         res.send(html);
     } catch (error) {
         console.error('Error listing pods:', error);
-        res.status(500).send(`Error listing pods: ${error.message}`);
+        const errorMessage = (error as Error).message;
+        res.status(500).send(`Error fetching logs: ${errorMessage}`);
     }
 });
 
@@ -329,7 +335,8 @@ app.get('/pods/:name/logs', requireAuth, async (req, res) => {
         res.send(logsResponse);
     } catch (error) {
         console.error('Error fetching logs:', error);
-        res.status(500).send(`Error fetching logs: ${error.message}`);
+        const errorMessage = (error as Error).message;
+        res.status(500).send(`Error fetching logs: ${errorMessage}`);
     }
 });
 
@@ -345,7 +352,8 @@ app.get('/pods/:name/delete', requireAuth, async (req, res) => {
         res.redirect('/pods');
     } catch (error) {
         console.error('Error deleting pod:', error);
-        res.status(500).send(`Error deleting pod: ${error.message}`);
+        const errorMessage = (error as Error).message;
+        res.status(500).send(`Error fetching logs: ${errorMessage}`);
     }
 });
 

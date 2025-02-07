@@ -1,18 +1,67 @@
-# OpenKokopi
-HelokuライクなPaaS OSS
+# MirageX App
 
-自鯖のDiscordBotを作るのにCIでイメージなんて作りたくない！
-kubernetesを基盤として、Webコントロールパネルで簡単にアプリケーションをデプロイできます。
+## Overview
+MirageX is a web application that allows users to deploy applications to a Kubernetes cluster. It provides a simple interface for managing deployments, viewing logs, and deleting pods.
 
-## 構築
-Kubernetes環境をご用意ください。
+## Features
+- User authentication
+- Deploy applications from GitHub repositories
+- View and manage Kubernetes pods
+- Display logs for each pod
 
-nginx-ingressが必要です。
+## Project Structure
 ```
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml
+miragex-app
+├── src
+│   ├── app.ts                # Entry point of the application
+│   ├── controllers           # Contains route controllers
+│   │   └── index.ts          # Index controller for handling routes
+│   ├── routes                # Contains route definitions
+│   │   └── index.ts          # Sets up application routes
+│   ├── types                 # Type definitions
+│   │   └── index.ts          # TypeScript interfaces
+│   └── main.ts               # Main logic for initializing the app
+├── package.json              # npm configuration file
+├── tsconfig.json             # TypeScript configuration file
+└── README.md                 # Project documentation
 ```
 
+## Installation
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd miragex-app
+   ```
 
-```
-kubectl apply -f k8s.yml
-```
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Build the project:
+   ```
+   npm run build
+   ```
+
+## Usage
+1. Start the application:
+   ```
+   npm start
+   ```
+
+2. Open your browser and navigate to `http://localhost:3000`.
+
+## API Endpoints
+- `GET /login`: Displays the login form.
+- `POST /login`: Authenticates the user.
+- `GET /`: Displays the main application interface.
+- `POST /deploy`: Deploys a new application to Kubernetes.
+- `GET /pods`: Lists all pods in the Kubernetes cluster.
+- `GET /pods/:name/logs`: Displays logs for a specific pod.
+- `GET /pods/:name/delete`: Deletes a specific pod.
+
+## Contributing
+Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
+
+## License
+This project is licensed under the MIT License.
