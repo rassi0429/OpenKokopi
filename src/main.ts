@@ -1,12 +1,6 @@
 import express from 'express';
-import session from 'express-session';
-import { KubeConfig, CoreV1Api, NetworkingV1Api} from '@kubernetes/client-node';
+import {KubeConfig, CoreV1Api, NetworkingV1Api} from '@kubernetes/client-node';
 
-declare module 'express-session' {
-    interface SessionData {
-        user: { username: string };
-    }
-}
 
 function createPodSpec(repoUrl: string, envVars = {}) {
     const repositoryName = repoUrl.split('/').pop()?.split('.').shift()?.toLowerCase()
@@ -68,7 +62,7 @@ function createPodSpec(repoUrl: string, envVars = {}) {
                     ],
                     env: envArray,
                     ports: [
-                        { containerPort: 3000 }
+                        {containerPort: 3000}
                     ]
                 }
             ]
@@ -92,19 +86,19 @@ function createServiceSpec(podName: string, port: number) {
                 app: podName
             },
             ports: [
-                { port: 80, targetPort: port }
+                {port: 80, targetPort: port}
             ]
         }
     };
 }
 
-function createIngressSpec(podName: string, host: string) {
+function createIngressSpec(serviceName: string, host: string) {
 
     return {
         apiVersion: 'networking.k8s.io/v1',
         kind: 'Ingress',
         metadata: {
-            name: podName,
+            name: serviceName,
             annotations: {
                 "kubernetes.io/ingress.class": "nginx"
             }
@@ -112,7 +106,7 @@ function createIngressSpec(podName: string, host: string) {
         spec: {
             rules: [
                 {
-                    host: host,
+                    host: host, // unko.unchi.app
                     "http": {
                         "paths": [
                             {
@@ -120,7 +114,7 @@ function createIngressSpec(podName: string, host: string) {
                                 "pathType": "Prefix",
                                 "backend": {
                                     "service": {
-                                        "name": podName,
+                                        "name": serviceName,
                                         "port": {
                                             "number": 80
                                         }
@@ -140,62 +134,10 @@ function createIngressSpec(podName: string, host: string) {
 // ------------------------------------
 const app = express();
 
-// セッション設定
-app.use(session({
-    secret: 'someSecretKey',
-    resave: false,
-    saveUninitialized: false
-}));
 
 // POSTデータ（URLエンコード）をパース
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 
-// ------------------------------------
-// ログイン機能 (超シンプルな例)
-// ------------------------------------
-const USERNAME = 'admin';
-const PASSWORD = 'pass';
-
-// ログインページ
-app.get('/login', (req, res) => {
-    res.send(`
-    <h1>Login</h1>
-    <form method="POST" action="/login">
-      <div>
-        <label>Username: <input type="text" name="username" /></label>
-      </div>
-      <div>
-        <label>Password: <input type="password" name="password" /></label>
-      </div>
-      <button type="submit">Login</button>
-    </form>
-  `);
-});
-
-// ログイン処理
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    if (username === USERNAME && password === PASSWORD) {
-        req.session.user = { username };
-        return res.redirect('/');
-    }
-    res.redirect('/login');
-});
-
-// ログアウト
-app.get('/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.redirect('/login');
-    });
-});
-
-// 認証チェック用ミドルウェア
-function requireAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
-    if (!req.session.user) {
-        return res.redirect('/login');
-    }
-    next();
-}
 
 // ------------------------------------
 // Kubernetes API クライアントの初期化
@@ -210,10 +152,10 @@ const k8sNetApi = kc.makeApiClient(NetworkingV1Api);
 // ------------------------------------
 // メインページ (ログイン必須)
 // ------------------------------------
-app.get('/', requireAuth, (req, res) => {
+app.get('/', (req, res) => {
     // デプロイフォームと、Podの一覧へのリンクを表示
     res.send(`
-    <h1>Welcome, ${req.session.user?.username}</h1>
+    <h1>Welcome, User</h1>
     <p>Deploy a new MirageX app:</p>
     <form method="POST" action="/deploy">
     <div>
@@ -237,10 +179,10 @@ app.get('/', requireAuth, (req, res) => {
 // ------------------------------------
 // Podを生成する (POST /deploy)
 // ------------------------------------
-app.post('/deploy', requireAuth, async (req, res) => {
-    const { repoUrl } = req.body;
-    const { envVars } = req.body;
-    const { host } = req.body;
+app.post('/deploy', async (req, res) => {
+    const {repoUrl} = req.body;
+    const {envVars} = req.body;
+    const {host} = req.body;
 
     const parsedEnv = parseEnvVars(envVars || '');
 
@@ -250,9 +192,9 @@ app.post('/deploy', requireAuth, async (req, res) => {
         const serviceManifest = createServiceSpec(podManifest.metadata.name, 3000);
         const ingressManifest = createIngressSpec(podManifest.metadata.name, host)
 
-        const response = await k8sCore.createNamespacedPod({ namespace: 'default', body: podManifest });
-        const serviceResponse = await k8sCore.createNamespacedService({ namespace: 'default', body: serviceManifest });
-        const ingressResponse = await k8sNetApi.createNamespacedIngress({ namespace: 'default', body: ingressManifest })
+        const response = await k8sCore.createNamespacedPod({namespace: 'default', body: podManifest});
+        const serviceResponse = await k8sCore.createNamespacedService({namespace: 'default', body: serviceManifest});
+        const ingressResponse = await k8sNetApi.createNamespacedIngress({namespace: 'default', body: ingressManifest})
         const createdPodName = response.metadata?.name;
         res.send(`
       <p>Pod created successfully: <strong>${createdPodName}</strong></p>
@@ -285,11 +227,11 @@ function parseEnvVars(envString: string) {
 // ------------------------------------
 // Pod 一覧を表示 (GET /pods)
 // ------------------------------------
-app.get('/pods', requireAuth, async (req, res) => {
+app.get('/pods', async (req, res) => {
     try {
-        const podsResponse = await k8sCore.listNamespacedPod({ namespace: 'default' });
-        const serviceResponse = await k8sCore.listNamespacedService({ namespace: "default" })
-        const ingressResponse = await k8sNetApi.listNamespacedIngress({ namespace: "default" })
+        const podsResponse = await k8sCore.listNamespacedPod({namespace: 'default'});
+        const serviceResponse = await k8sCore.listNamespacedService({namespace: "default"})
+        const ingressResponse = await k8sNetApi.listNamespacedIngress({namespace: "default"})
         console.log(JSON.stringify(ingressResponse.items, null, 2))
         const pods = podsResponse.items;
 
@@ -303,7 +245,7 @@ app.get('/pods', requireAuth, async (req, res) => {
             const name = pod.metadata?.name || 'unknown';
             const phase = pod.status?.phase || 'unknown';
             const host = ingressResponse.items.find(i => i.metadata?.name === name)?.spec?.rules?.[0]?.host;
-            
+
             html += `
         <li>
           <strong>${name}  HOST: ${host}</strong> 
@@ -326,11 +268,15 @@ app.get('/pods', requireAuth, async (req, res) => {
 // ------------------------------------
 // Pod のログを表示 (GET /pods/:name/logs)
 // ------------------------------------
-app.get('/pods/:name/logs', requireAuth, async (req, res) => {
+app.get('/pods/:name/logs', async (req, res) => {
     const podName = req.params.name;
     try {
         // initContainerは完了後に終了するので、ログを見たいのはメインコンテナ "node-bot" の想定
-        const logsResponse = await k8sCore.readNamespacedPodLog({ namespace: 'default', name: podName, container: 'node-bot' });
+        const logsResponse = await k8sCore.readNamespacedPodLog({
+            namespace: 'default',
+            name: podName,
+            container: 'node-bot'
+        });
         res.set('Content-Type', 'text/plain');
         res.send(logsResponse);
     } catch (error) {
@@ -343,12 +289,12 @@ app.get('/pods/:name/logs', requireAuth, async (req, res) => {
 // ------------------------------------
 // Pod を削除する例 (GET /pods/:name/delete)
 // ------------------------------------
-app.get('/pods/:name/delete', requireAuth, async (req, res) => {
+app.get('/pods/:name/delete', async (req, res) => {
     const podName = req.params.name;
     try {
-        await k8sCore.deleteNamespacedPod({ namespace: 'default', name: podName });
-        await k8sCore.deleteNamespacedService({ namespace: "default", name: podName })
-        await k8sNetApi.deleteNamespacedIngress({ namespace: "default", name: podName })
+        await k8sCore.deleteNamespacedPod({namespace: 'default', name: podName});
+        await k8sCore.deleteNamespacedService({namespace: "default", name: podName})
+        await k8sNetApi.deleteNamespacedIngress({namespace: "default", name: podName})
         res.redirect('/pods');
     } catch (error) {
         console.error('Error deleting pod:', error);
