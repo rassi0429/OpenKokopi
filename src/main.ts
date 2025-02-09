@@ -9,7 +9,7 @@ declare module 'express-session' {
 }
 
 function createPodSpec(repoUrl: string, envVars = {}) {
-    const repositoryName = repoUrl.split('/').pop()?.split('.').shift()
+    const repositoryName = repoUrl.split('/').pop()?.split('.').shift()?.toLowerCase()
     const podName = `${repositoryName}-${Date.now()}`;
 
     // 受け取った envVars オブジェクトを k8s 用の配列形式に変換
