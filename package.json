@@ -22,5 +22,9 @@
     "ts-node": "^10.4.0",
     "@types/express": "^4.17.13",
     "@types/express-session": "^1.17.3"
+  },
+
+  "volta": {
+    "node": "22.13.1"
   }
 }
