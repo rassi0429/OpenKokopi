@@ -55,7 +55,7 @@ router.get('/pods', async (req, res) => {
         const podsResponse = await k8sCore.listNamespacedPod({namespace: 'default'});
         const serviceResponse = await k8sCore.listNamespacedService({namespace: "default"})
         const ingressResponse = await k8sNetApi.listNamespacedIngress({namespace: "default"})
-        console.log(JSON.stringify(ingressResponse.items, null, 2))
+
         const pods = podsResponse.items;
 
         res.json({
