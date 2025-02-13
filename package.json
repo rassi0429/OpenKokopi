@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "run-p dev:*",
-    "dev:frontend": "npm run dev -w workspaces/frontend",
+    "dev:panel": "npm run dev -w workspaces/panel",
     "dev:backend": "npm run build:backend && npm run start:backend",
     "build:backend": "npm run build -w workspaces/backend",
-    "build:frontend": "npm run build -w workspaces/frontend",
+    "build:panel": "npm run build -w workspaces/panel",
     "start:backend": "npm run start -w workspaces/backend",
-    "start:frontend": "npm run start -w workspaces/frontend"
+    "start:panel": "npm run start -w workspaces/panel"
   },
   "keywords": [],
   "author": "",

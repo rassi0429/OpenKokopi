@@ -5,24 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e52056ee-4b98-4120-b510-2f6904273a6b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/app/layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/eslint.config.mjs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/next.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/pages/_app.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/pages/_document.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/pages/index.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/postcss.config.mjs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/tailwind.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/frontend/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/backend/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/eslint.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/next.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/pages/_app.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/_app.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/pages/_document.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/_document.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/pages/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/postcss.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/postcss.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/tailwind.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +34,31 @@
     &quot;assignee&quot;: &quot;rassi0429&quot;
   }
 }</component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="feat/monorepo" />
+                    <option name="lastUsedInstant" value="1739415241" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1739415240" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/rassi0429/miragex.app&quot;,
@@ -57,7 +78,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "#4 on feat/monorepo",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -122,8 +143,8 @@
     </configuration>
     <list>
       <item itemvalue="npm.backend:start" />
-      <item itemvalue="npm.frontend:dev" />
       <item itemvalue="npm.dev" />
+      <item itemvalue="npm.frontend:dev" />
     </list>
   </component>
   <component name="SharedIndexes">
@@ -143,7 +164,8 @@
       <updated>1739413803326</updated>
       <workItem from="1739413805058" duration="253000" />
       <workItem from="1739414155380" duration="80000" />
-      <workItem from="1739414244974" duration="939000" />
+      <workItem from="1739414244974" duration="1197000" />
+      <workItem from="1739415497301" duration="51000" />
     </task>
     <servers />
   </component>
