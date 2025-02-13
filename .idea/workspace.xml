@@ -6,19 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="e52056ee-4b98-4120-b510-2f6904273a6b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/eslint.config.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/next.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/pages/_app.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/_app.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/pages/_document.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/_document.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/pages/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/postcss.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/postcss.config.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/tailwind.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/panel/pages/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/panel/pages/theme/themeConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/theme/themeConfig.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,12 +32,20 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
-                    <option name="branchName" value="feat/monorepo" />
-                    <option name="lastUsedInstant" value="1739415241" />
+                    <option name="branchName" value="feat/panel" />
+                    <option name="lastUsedInstant" value="1739416043" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="develop" />
+                    <option name="lastUsedInstant" value="1739415956" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="main" />
-                    <option name="lastUsedInstant" value="1739415240" />
+                    <option name="lastUsedInstant" value="1739415941" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feat/monorepo" />
+                    <option name="lastUsedInstant" value="1739415241" />
                   </RecentBranch>
                 </list>
               </option>
@@ -78,7 +75,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "#4 on feat/monorepo",
+    "git-widget-placeholder": "feat/panel",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -88,14 +85,18 @@
     "npm.backend:build.executor": "Run",
     "npm.backend:start.executor": "Run",
     "npm.dev.executor": "Run",
+    "npm.dev:panel.executor": "Run",
     "npm.frontend:dev.executor": "Run",
-    "settings.editor.selected.configurable": "editor.preferences.inline.completion",
+    "npm.lint:panel.executor": "Run",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "ts.external.directory.path": "C:\\Users\\neo\\GitHub\\miragex.app\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\neo\GitHub\miragex.app\workspaces\panel\pages" />
+      <recent name="C:\Users\neo\GitHub\miragex.app\workspaces\backend\src\lib" />
       <recent name="C:\Users\neo\GitHub\miragex.app\workspaces\backend" />
       <recent name="C:\Users\neo\GitHub\miragex.app\workspaces\backend\src" />
     </key>
@@ -131,6 +132,16 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="dev:panel" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev:panel" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <configuration name="frontend:dev" type="js.build_tools.npm" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -141,11 +152,28 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="lint:panel" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="lint:panel" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="npm.backend:start" />
       <item itemvalue="npm.dev" />
       <item itemvalue="npm.frontend:dev" />
+      <item itemvalue="npm.lint:panel" />
+      <item itemvalue="npm.dev:panel" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.dev:panel" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -166,6 +194,7 @@
       <workItem from="1739414155380" duration="80000" />
       <workItem from="1739414244974" duration="1197000" />
       <workItem from="1739415497301" duration="51000" />
+      <workItem from="1739417162456" duration="6462000" />
     </task>
     <servers />
   </component>
