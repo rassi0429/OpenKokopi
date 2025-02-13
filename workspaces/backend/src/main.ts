@@ -1,4 +1,5 @@
 import express from 'express';
+import basicAuth from 'express-basic-auth';
 import ApiRouter from './api/index.js';
 
 import {createProxyMiddleware} from 'http-proxy-middleware';
@@ -15,15 +16,20 @@ app.use('/api', ApiRouter);
 
 
 app.use(
-    "/",
-    createProxyMiddleware({
-        target: PANEL_URL,
-        changeOrigin: true,
-    })
+  "/",
+  basicAuth({
+    users: {'admin': 'pass'},
+    challenge: true,
+    realm: 'Imb4T3st4pp',
+  }),
+  createProxyMiddleware({
+    target: PANEL_URL,
+    changeOrigin: true,
+  })
 );
 
 
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
