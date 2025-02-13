@@ -4,6 +4,9 @@ HelokuライクなPaaS OSS
 自鯖のDiscordBotを作るのにCIでイメージなんて作りたくない！
 kubernetesを基盤として、Webコントロールパネルで簡単にアプリケーションをデプロイできます。
 
+
+
+
 ## 構築
 Kubernetes環境をご用意ください。
 
@@ -15,4 +18,10 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/mast
 
 ```
 kubectl apply -f k8s.yml
+```
+
+## 開発
+```
+npm i
+npm run dev
 ```
