@@ -30,6 +30,7 @@
   "dependencies": {
     "@ant-design/cssinjs": "^1.23.0",
     "antd": "^5.24.0",
+    "express-basic-auth": "^1.2.1",
     "express-http-proxy": "^2.1.1",
     "frontend": "^0.1.0",
     "http-proxy-middleware": "^3.0.3"
