@@ -3,28 +3,25 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "start": "node dist/main.js"
+    "dev": "run-p dev:*",
+    "dev:frontend": "npm run dev -w workspaces/frontend",
+    "dev:backend": "npm run build:backend && npm run start:backend",
+    "build:backend": "npm run build -w workspaces/backend",
+    "build:frontend": "npm run build -w workspaces/frontend",
+    "start:backend": "npm run start -w workspaces/backend",
+    "start:frontend": "npm run start -w workspaces/frontend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@kubernetes/client-node": "^1.0.0",
-    "express": "^4.21.2",
-    "express-session": "^1.18.1"
-  },
-  "devDependencies": {
-    "typescript": "^4.5.4",
-    "ts-node": "^10.4.0",
-    "@types/express": "^4.17.13",
-    "@types/express-session": "^1.17.3"
-  },
-
   "volta": {
     "node": "22.13.1"
+  },
+  "workspaces": [
+    "workspaces/*"
+  ],
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
   }
 }
