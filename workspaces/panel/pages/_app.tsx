@@ -1,12 +1,15 @@
-import type { AppProps } from "next/app";
-import RootLayout from "@/app/layout";
+import type {AppProps} from "next/app";
+import {ConfigProvider} from 'antd';
 
-const App = ({ Component, pageProps }: AppProps) => {
-  return (
-    <RootLayout>
-      <Component {...pageProps} />
-    </RootLayout>
-  );
+import 'antd/dist/reset.css';
+import theme from './theme/themeConfig';
+
+const App = ({Component, pageProps}: AppProps) => {
+    return (
+        <ConfigProvider theme={theme}>
+            <Component {...pageProps} />
+        </ConfigProvider>
+    );
 }
 
 export default App;
