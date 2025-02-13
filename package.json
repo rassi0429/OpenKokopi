@@ -7,8 +7,10 @@
     "dev": "run-p dev:*",
     "dev:panel": "npm run dev -w workspaces/panel",
     "dev:backend": "npm run build:backend && npm run start:backend",
+    "build": "run-s build:*",
     "build:backend": "npm run build -w workspaces/backend",
     "build:panel": "npm run build -w workspaces/panel",
+    "start": "run-p start:*",
     "start:backend": "npm run start -w workspaces/backend",
     "start:panel": "npm run start -w workspaces/panel",
     "lint:panel": "npm run lint -w workspaces/panel"

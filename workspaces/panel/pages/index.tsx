@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Card, Flex, Input, Layout, Modal, Tag, Typography} from 'antd';
-import TextArea from "antd/es/input/TextArea";
+const { TextArea } = Input;
 
 const {Header} = Layout;
 
