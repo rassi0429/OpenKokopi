@@ -1,137 +1,8 @@
 import express from 'express';
 import {KubeConfig, CoreV1Api, NetworkingV1Api} from '@kubernetes/client-node';
+import {createPodSpec, createServiceSpec, createIngressSpec} from './k8s/index.js';
 
 
-function createPodSpec(repoUrl: string, envVars = {}) {
-    const repositoryName = repoUrl.split('/').pop()?.split('.').shift()?.toLowerCase()
-    const podName = `${repositoryName}-${Date.now()}`;
-
-    // 受け取った envVars オブジェクトを k8s 用の配列形式に変換
-    const envArray = Object.entries(envVars).map(([key, value]) => ({
-        name: key,
-        value: String(value)
-    }));
-
-    return {
-        apiVersion: 'v1',
-        kind: 'Pod',
-        metadata: {
-            name: podName,
-            labels: {
-                app: podName
-            }
-        },
-        spec: {
-            restartPolicy: 'Always',
-            volumes: [
-                {
-                    name: 'app-volume',
-                    emptyDir: {}
-                }
-            ],
-            initContainers: [
-                {
-                    name: 'git-clone',
-                    image: 'alpine/git:latest',
-                    command: ['sh', '-c'],
-                    args: [
-                        `[ -d "/app/.git" ] && (echo "Repository already exists. Pulling latest changes..." && git -C /app pull) || (echo "Repository not found. Cloning..." && git clone ${repoUrl} /app)`
-                    ],
-                    volumeMounts: [
-                        {
-                            name: 'app-volume',
-                            mountPath: '/app'
-                        }
-                    ]
-                }
-            ],
-            containers: [
-                {
-                    name: 'node-bot',
-                    image: 'node:18',
-                    workingDir: '/app',
-                    command: ['bash', '-c'],
-                    args: [
-                        'npm install && npm run build && npm run start'
-                    ],
-                    volumeMounts: [
-                        {
-                            name: 'app-volume',
-                            mountPath: '/app'
-                        }
-                    ],
-                    env: envArray,
-                    ports: [
-                        {containerPort: 3000}
-                    ]
-                }
-            ]
-        }
-    };
-}
-
-function createServiceSpec(podName: string, port: number) {
-    return {
-        apiVersion: 'v1',
-        kind: 'Service',
-        metadata: {
-            name: podName,
-            labels: {
-                app: podName
-            }
-        },
-        spec: {
-            type: 'ClusterIP',
-            selector: {
-                app: podName
-            },
-            ports: [
-                {port: 80, targetPort: port}
-            ]
-        }
-    };
-}
-
-function createIngressSpec(serviceName: string, host: string) {
-
-    return {
-        apiVersion: 'networking.k8s.io/v1',
-        kind: 'Ingress',
-        metadata: {
-            name: serviceName,
-            annotations: {
-                "kubernetes.io/ingress.class": "nginx"
-            }
-        },
-        spec: {
-            rules: [
-                {
-                    host: host, // unko.unchi.app
-                    "http": {
-                        "paths": [
-                            {
-                                "path": "/",
-                                "pathType": "Prefix",
-                                "backend": {
-                                    "service": {
-                                        "name": serviceName,
-                                        "port": {
-                                            "number": 80
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-            ]
-        }
-    };
-}
-
-// ------------------------------------
-// Expressアプリケーションの設定
-// ------------------------------------
 const app = express();
 
 
@@ -149,9 +20,9 @@ kc.loadFromDefault()
 const k8sCore = kc.makeApiClient(CoreV1Api);
 const k8sNetApi = kc.makeApiClient(NetworkingV1Api);
 
-// ------------------------------------
-// メインページ (ログイン必須)
-// ------------------------------------
+// /api
+
+
 app.get('/', (req, res) => {
     // デプロイフォームと、Podの一覧へのリンクを表示
     res.send(`
@@ -176,9 +47,7 @@ app.get('/', (req, res) => {
   `);
 });
 
-// ------------------------------------
-// Podを生成する (POST /deploy)
-// ------------------------------------
+
 app.post('/deploy', async (req, res) => {
     const {repoUrl} = req.body;
     const {envVars} = req.body;
@@ -224,9 +93,7 @@ function parseEnvVars(envString: string) {
     return envObj;
 }
 
-// ------------------------------------
-// Pod 一覧を表示 (GET /pods)
-// ------------------------------------
+
 app.get('/pods', async (req, res) => {
     try {
         const podsResponse = await k8sCore.listNamespacedPod({namespace: 'default'});
@@ -265,9 +132,7 @@ app.get('/pods', async (req, res) => {
     }
 });
 
-// ------------------------------------
-// Pod のログを表示 (GET /pods/:name/logs)
-// ------------------------------------
+
 app.get('/pods/:name/logs', async (req, res) => {
     const podName = req.params.name;
     try {
@@ -286,9 +151,6 @@ app.get('/pods/:name/logs', async (req, res) => {
     }
 });
 
-// ------------------------------------
-// Pod を削除する例 (GET /pods/:name/delete)
-// ------------------------------------
 app.get('/pods/:name/delete', async (req, res) => {
     const podName = req.params.name;
     try {
@@ -303,9 +165,7 @@ app.get('/pods/:name/delete', async (req, res) => {
     }
 });
 
-// ------------------------------------
-// サーバー起動
-// ------------------------------------
+
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
