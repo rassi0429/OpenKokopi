@@ -38,14 +38,14 @@ router.post("/deploy", async (req, res) => {
         const serviceResponse = await k8sCore.createNamespacedService({namespace: 'default', body: serviceManifest});
         const ingressResponse = await k8sNetApi.createNamespacedIngress({namespace: 'default', body: ingressManifest})
         const createdPodName = response.metadata?.name;
-        res.send(`
-      <p>Pod created successfully: <strong>${createdPodName}</strong></p>
-      <p><a href="/pods">Go to Pods list</a></p>
-    `);
+        res.json({
+            message: `Pod ${createdPodName} created successfully`,
+            podName: createdPodName,
+        })
     } catch (error) {
         console.error('Error creating Pod:', error);
         const errorMessage = (error as Error).message;
-        res.status(500).send(`Error fetching logs: ${errorMessage}`);
+        res.status(500).json({error: errorMessage});
     }
 })
 
@@ -58,33 +58,18 @@ router.get('/pods', async (req, res) => {
         console.log(JSON.stringify(ingressResponse.items, null, 2))
         const pods = podsResponse.items;
 
-        let html = `
-      <h1>Pod List</h1>
-      <p><a href="/">Back to Home</a></p>
-      <ul>
-    `;
-
-        pods.forEach(pod => {
-            const name = pod.metadata?.name || 'unknown';
-            const phase = pod.status?.phase || 'unknown';
-            const host = ingressResponse.items.find(i => i.metadata?.name === name)?.spec?.rules?.[0]?.host;
-
-            html += `
-        <li>
-          <strong>${name}  HOST: ${host}</strong> 
-          (status: ${phase}) 
-          [<a href="/pods/${name}/logs">Logs</a>]
-          [<a href="/pods/${name}/delete">Delete</a>]
-        </li>
-      `;
-        });
-
-        html += '</ul>';
-        res.send(html);
+        res.json({
+            pods: pods.map(pod => ({
+                name: pod.metadata?.name,
+                status: pod.status?.phase,
+                service: serviceResponse.items.find(service => service.metadata?.name === pod.metadata?.name),
+                ingress: ingressResponse.items.find(ingress => ingress.metadata?.name === pod.metadata?.name)
+            }))
+        })
     } catch (error) {
         console.error('Error listing pods:', error);
         const errorMessage = (error as Error).message;
-        res.status(500).send(`Error fetching logs: ${errorMessage}`);
+        res.status(500).json({error: errorMessage});
     }
 });
 
@@ -97,12 +82,11 @@ router.get('/pods/:name/logs', async (req, res) => {
             name: podName,
             container: 'node-bot'
         });
-        res.set('Content-Type', 'text/plain');
-        res.send(logsResponse);
+        res.json({log:logsResponse});
     } catch (error) {
         console.error('Error fetching logs:', error);
         const errorMessage = (error as Error).message;
-        res.status(500).send(`Error fetching logs: ${errorMessage}`);
+        res.status(500).json({error: errorMessage});
     }
 });
 
@@ -112,11 +96,11 @@ router.get('/pods/:name/delete', async (req, res) => {
         await k8sCore.deleteNamespacedPod({namespace: 'default', name: podName});
         await k8sCore.deleteNamespacedService({namespace: "default", name: podName})
         await k8sNetApi.deleteNamespacedIngress({namespace: "default", name: podName})
-        res.redirect('/pods');
+        res.json({message: `Pod ${podName} deleted successfully`});
     } catch (error) {
         console.error('Error deleting pod:', error);
         const errorMessage = (error as Error).message;
-        res.status(500).send(`Error fetching logs: ${errorMessage}`);
+        res.status(500).json({error: errorMessage});
     }
 });
 

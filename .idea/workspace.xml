@@ -5,14 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e52056ee-4b98-4120-b510-2f6904273a6b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/workspaces/backend/src/api/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/workspaces/backend/src/lib/utils.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/backend/src/k8s/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/backend/src/lib/k8s/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/backend/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/backend/src/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/panel/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/backend/src/api/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/backend/src/api/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +163,7 @@
       <workItem from="1739414155380" duration="80000" />
       <workItem from="1739414244974" duration="1197000" />
       <workItem from="1739415497301" duration="51000" />
-      <workItem from="1739417162456" duration="1667000" />
+      <workItem from="1739417162456" duration="2318000" />
     </task>
     <servers />
   </component>
