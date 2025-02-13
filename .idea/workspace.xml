@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e52056ee-4b98-4120-b510-2f6904273a6b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/workspaces/panel/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/next.config.ts" afterDir="false" />
-    </list>
+    <list default="true" id="e52056ee-4b98-4120-b510-2f6904273a6b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,16 +28,16 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
+                    <option name="branchName" value="develop" />
+                    <option name="lastUsedInstant" value="1739461687" />
+                  </RecentBranch>
+                  <RecentBranch>
                     <option name="branchName" value="main" />
                     <option name="lastUsedInstant" value="1739457201" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="feat/panel" />
                     <option name="lastUsedInstant" value="1739429633" />
-                  </RecentBranch>
-                  <RecentBranch>
-                    <option name="branchName" value="develop" />
-                    <option name="lastUsedInstant" value="1739423717" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="feat/monorepo" />
@@ -76,7 +74,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "develop",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
