@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e52056ee-4b98-4120-b510-2f6904273a6b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/workspaces/panel/pages/theme/themeConfig.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/workspaces/backend/src/api/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/backend/src/api/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/panel/app/layout.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/panel/pages/_app.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/_app.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/panel/pages/_document.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/_document.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/workspaces/panel/pages/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/workspaces/panel/pages/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,28 +76,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feat/panel&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.backend:build.executor&quot;: &quot;Run&quot;,
-    &quot;npm.backend:start.executor&quot;: &quot;Run&quot;,
-    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
-    &quot;npm.frontend:dev.executor&quot;: &quot;Run&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\neo\\GitHub\\miragex.app\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "feat/panel",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.backend:build.executor": "Run",
+    "npm.backend:start.executor": "Run",
+    "npm.dev.executor": "Run",
+    "npm.dev:panel.executor": "Run",
+    "npm.frontend:dev.executor": "Run",
+    "npm.lint:panel.executor": "Run",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "C:\\Users\\neo\\GitHub\\miragex.app\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\neo\GitHub\miragex.app\workspaces\panel\pages" />
       <recent name="C:\Users\neo\GitHub\miragex.app\workspaces\backend\src\lib" />
       <recent name="C:\Users\neo\GitHub\miragex.app\workspaces\backend" />
       <recent name="C:\Users\neo\GitHub\miragex.app\workspaces\backend\src" />
@@ -128,6 +137,16 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="dev:panel" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev:panel" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <configuration name="frontend:dev" type="js.build_tools.npm" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -138,11 +157,28 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="lint:panel" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="lint:panel" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="npm.backend:start" />
       <item itemvalue="npm.dev" />
       <item itemvalue="npm.frontend:dev" />
+      <item itemvalue="npm.lint:panel" />
+      <item itemvalue="npm.dev:panel" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.dev:panel" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -163,7 +199,7 @@
       <workItem from="1739414155380" duration="80000" />
       <workItem from="1739414244974" duration="1197000" />
       <workItem from="1739415497301" duration="51000" />
-      <workItem from="1739417162456" duration="2318000" />
+      <workItem from="1739417162456" duration="4543000" />
     </task>
     <servers />
   </component>
