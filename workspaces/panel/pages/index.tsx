@@ -1,26 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Flex, Input, Layout, Modal, Tag, Typography} from 'antd';
+import {Breadcrumb, Button, Flex, Input, Layout, Modal, Typography} from 'antd';
+import NamespaceCard from "@/Components/namespaceCard";
+import {Namespace} from "@/lib/type";
+import {HomeOutlined} from "@ant-design/icons";
 const { TextArea } = Input;
 
 const {Header} = Layout;
 
-const API_LIST_URL = "/api/pods"
+const API_LIST_URL = "/api/namespaces"
 
-type Pod = {
-  name: string;
-  status: string;
-  service: string;
-  ingress: unknown;
-}
 
 const Index = () => {
 
-  const [pods, setPods] = useState<Pod[]>([]);
-
-  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
-  const [logText, setLogText] = useState("");
+  const [namespaces, setNameSpaces] = useState<Namespace[]>([]);
 
   const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
+  const [namespace, setNamespace] = useState("");
   const [deployRepoUrl, setDeployRepoUrl] = useState("");
   const [deployEnvVars, setDeployEnvVars] = useState("");
   const [deployHost, setDeployHost] = useState("");
@@ -29,24 +24,18 @@ const Index = () => {
     fetch(API_LIST_URL)
       .then(res => res.json())
       .then(data => {
-        setPods(data.pods);
+        setNameSpaces(data);
       })
   }, []);
 
 
   return (
     <>
-      <Modal title="Basic Modal" open={isLogModalOpen} onCancel={() => {
-        setIsLogModalOpen(false)
-      }}
-             footer={(<></>)}
-      >
-        <pre style={{maxHeight: 300}}>{logText}</pre>
-      </Modal>
       <Modal title="Deploy" open={isDeployModalOpen} onCancel={() => {
         setIsDeployModalOpen(false)
       }} footer={(<></>)}>
         <Flex vertical gap={10}>
+          <Input type="text" placeholder="namespace" value={namespace} onChange={(e) => setNamespace(e.target.value)}/>
           <Input type="text" placeholder="Repository URL" value={deployRepoUrl} onChange={(e) => setDeployRepoUrl(e.target.value)}/>
           <TextArea placeholder="Environment Variables" value={deployEnvVars} onChange={(e) => setDeployEnvVars(e.target.value)}/>
           <Input type="text" placeholder="Host" value={deployHost} onChange={(e) => setDeployHost(e.target.value)}/>
@@ -59,7 +48,8 @@ const Index = () => {
               body: JSON.stringify({
                 repoUrl: deployRepoUrl,
                 envVars: deployEnvVars,
-                host: deployHost
+                host: deployHost,
+                namespace
               })
             }).then(res => res.json())
               .then(data => {
@@ -86,54 +76,26 @@ const Index = () => {
           </Header>
           <Layout.Content>
             <div style={{padding: 24}}>
+
+              <Breadcrumb
+                items={[
+                  {
+                    href: '/',
+                    title: <HomeOutlined/>,
+                  },
+                  {
+                    title: (
+                      <>
+                        <span>Apps</span>
+                      </>
+                    ),
+                  }
+                ]}
+              />
               <Typography.Title level={2}>Apps</Typography.Title>
               <div>
-                {pods.map(pod => (
-                  <Card key={pod.name}>
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'flex-start',
-                      gap: 10
-                    }}>
-                      <div>
-                        <Typography.Text>{pod.name}</Typography.Text>
-                      </div>
-                      {
-                        // @ts-expect-error wip
-                        pod.ingress?.spec?.rules?.[0]?.host ? (
-                          <Tag color="green">
-                            {/* @ts-expect-error wip */}
-                            {pod.ingress?.spec?.rules?.[0]?.host}
-                          </Tag>
-                        ) : (<></>)
-                      }
-                      <div style={{marginLeft: "auto"}}>
-                        <Typography.Text>{pod.status}</Typography.Text>
-                      </div>
-                      <Button variant={"solid"} color={"primary"} onClick={() => {
-                        setIsLogModalOpen(true);
-                        fetch(`/api/pods/${pod.name}/logs`)
-                          .then(res => res.json())
-                          .then(data => {
-                            setLogText(data.log);
-                          })
-                      }}>Log</Button>
-                      <Button variant={"solid"} color={"danger"} onClick={() => {
-                        if (window.confirm(`Are you sure to delete ${pod.name}?`)) {
-                          fetch(`/api/pods/${pod.name}/delete`)
-                            .then(res => res.json())
-                            .then(data => {
-                              console.log(data);
-                              // TODO 本当はバックエンドが削除を待つ必要がある
-                              setTimeout(() => {
-                                window.location.reload();
-                              }, 1000);
-                            })
-                        }
-                      }}>Delete</Button>
-                    </div>
-                  </Card>
+                {namespaces.map(ns => (
+                  <NamespaceCard namespace={ns.metadata.name} key={ns.metadata.name}/>
                 ))}
               </div>
             </div>
