@@ -1,0 +1,24 @@
+name: Build Check
+
+on:
+  pull_request:
+    branches: [ develop, main ]  # Adjust if necessary
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22  # Adjust Node.js version as needed
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
