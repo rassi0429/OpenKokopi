@@ -38,7 +38,7 @@ router.post("/deploy", async (req, res) => {
   try {
     const k8sNamespace = createNamespaceSpec(namespace, {
       repositoryUrl: repoUrl.replace(/https?:\/\//, '').replace(/\//g, '_'),
-      deployEnvVars: envVars,
+      deployEnvVars: "not implemented",
       deployUser: "admin"
     })
     await k8sCore.createNamespace({body: k8sNamespace})
