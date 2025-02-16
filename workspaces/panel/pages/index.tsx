@@ -1,17 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Flex, Input, Layout, Modal, Typography} from 'antd';
+import {Breadcrumb, Button, Flex, Input, Layout, Modal, Typography} from 'antd';
 import NamespaceCard from "@/Components/namespaceCard";
+import {Namespace} from "@/lib/type";
+import {HomeOutlined} from "@ant-design/icons";
 const { TextArea } = Input;
 
 const {Header} = Layout;
 
 const API_LIST_URL = "/api/namespaces"
 
-type Namespace = {
-  metadata: {
-    name: string;
-  }
-}
 
 const Index = () => {
 
@@ -79,6 +76,22 @@ const Index = () => {
           </Header>
           <Layout.Content>
             <div style={{padding: 24}}>
+
+              <Breadcrumb
+                items={[
+                  {
+                    href: '/',
+                    title: <HomeOutlined/>,
+                  },
+                  {
+                    title: (
+                      <>
+                        <span>Apps</span>
+                      </>
+                    ),
+                  }
+                ]}
+              />
               <Typography.Title level={2}>Apps</Typography.Title>
               <div>
                 {namespaces.map(ns => (

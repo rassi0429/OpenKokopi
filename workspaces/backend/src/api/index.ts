@@ -37,7 +37,6 @@ router.post("/deploy", async (req, res) => {
 
   try {
     const k8sNamespace = createNamespaceSpec(namespace, {
-      // https://github.com/hogehoge/hagehage => hogehoge_hagehage
       repositoryUrl: repoUrl.replace(/https?:\/\//, '').replace(/\//g, '_'),
       deployEnvVars: envVars,
       deployUser: "admin"
@@ -64,7 +63,6 @@ router.post("/deploy", async (req, res) => {
     res.status(500).json({error: errorMessage});
   }
 })
-
 
 router.get('/namespaces', async (req, res) => {
   try {
