@@ -151,35 +151,4 @@ router.post("/namespace/:namespace/delete", async (req, res) => {
   }
 })
 
-// router.get('/pods/:name/logs', async (req, res) => {
-//   const podName = req.params.name;
-//   try {
-//     // initContainerは完了後に終了するので、ログを見たいのはメインコンテナ "node-bot" の想定
-//     const logsResponse = await k8sCore.readNamespacedPodLog({
-//       namespace: 'default',
-//       name: podName,
-//       container: 'node-bot'
-//     });
-//     res.json({log: logsResponse});
-//   } catch (error) {
-//     console.error('Error fetching logs:', error);
-//     const errorMessage = (error as Error).message;
-//     res.status(500).json({error: errorMessage});
-//   }
-// });
-//
-// router.get('/pods/:name/delete', async (req, res) => {
-//   const podName = req.params.name;
-//   try {
-//     await k8sCore.deleteNamespacedPod({namespace: 'default', name: podName});
-//     await k8sCore.deleteNamespacedService({namespace: "default", name: podName})
-//     await k8sNetApi.deleteNamespacedIngress({namespace: "default", name: podName})
-//     res.json({message: `Pod ${podName} deleted successfully`});
-//   } catch (error) {
-//     console.error('Error deleting pod:', error);
-//     const errorMessage = (error as Error).message;
-//     res.status(500).json({error: errorMessage});
-//   }
-// });
-
 export default router;

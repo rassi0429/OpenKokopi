@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Flex, Input, Layout, Modal, Tag, Typography} from 'antd';
+import {Button, Flex, Input, Layout, Modal, Typography} from 'antd';
 import NamespaceCard from "@/Components/namespaceCard";
 const { TextArea } = Input;
 
