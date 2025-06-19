@@ -36,10 +36,10 @@ spec:
               mountPath: "/app"
       containers:
         - name: node-bot
-          image: node:22-alpine
+          image: node:22
           imagePullPolicy: Always
           workingDir: /app
-          command: ["sh", "-c"]
+          command: ["bash", "-c"]
           args: ['npm install && npm run build && npm run start']
           volumeMounts:
             - name: "app-volume"
