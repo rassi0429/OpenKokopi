@@ -170,7 +170,7 @@ export const createDeploymentSpec = (repoUrl: string, envVars = {}, replicas: nu
           initContainers: [
             {
               name: 'git-clone',
-              image: 'alpine/git:latest',
+              image: 'alpine/git:v2.45.2',
               command: ['sh', '-c'],
               args: [
                 `[ -d "/app/.git" ] && (echo "Repository already exists. Pulling latest changes..." && git -C /app pull) || (echo "Repository not found. Cloning..." && git clone ${repoUrl} /app)`
