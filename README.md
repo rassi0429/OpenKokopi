@@ -25,3 +25,9 @@ kubectl apply -f k8s.yml
 npm i
 npm run dev
 ```
+
+## microk8s
+なんかよく落ちるときはこれを実行してください。
+```bash
+sudo touch /var/snap/microk8s/current/var/lock/no-cert-reissue
+```
