@@ -18,7 +18,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: git-clone
-          image: alpine/git:v2.45.2
+          image: alpine/git:2.45.2
           command: ["sh", "-c"]
           args:
             - |
@@ -36,10 +36,10 @@ spec:
               mountPath: "/app"
       containers:
         - name: node-bot
-          image: node:22
+          image: node:22-bookworm-slim
           imagePullPolicy: Always
           workingDir: /app
-          command: ["bash", "-c"]
+          command: ["sh", "-c"]
           args: ['npm install && npm run build && npm run start']
           volumeMounts:
             - name: "app-volume"
