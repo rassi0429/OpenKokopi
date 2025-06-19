@@ -36,6 +36,18 @@ router.post("/deploy", async (req, res) => {
   const parsedEnv = parseEnvVars(envVars || '');
 
   try {
+    // Check if hostname is already in use across all namespaces BEFORE creating anything
+    const allIngresses = await k8sNetApi.listIngressForAllNamespaces();
+    const hostInUse = allIngresses.items.some(ingress => 
+      ingress.spec?.rules?.some(rule => rule.host === host)
+    );
+    
+    if (hostInUse) {
+      return res.status(400).json({
+        error: `Hostname ${host} is already in use by another application`
+      });
+    }
+
     const k8sNamespace = createNamespaceSpec(namespace, {
       repositoryUrl: repoUrl.replace(/https?:\/\//, '').replace(/\//g, '_'),
       deployEnvVars: "not_implemented",
@@ -47,8 +59,7 @@ router.post("/deploy", async (req, res) => {
     const deployManifest = createDeploymentSpec(repoUrl, parsedEnv, 1, namespace);
     const serviceManifest = createServiceSpec(deployManifest.metadata.name, 3000, namespace);
     const ingressManifest = createIngressSpec(deployManifest.metadata.name, host, namespace)
-
-
+    
     const deployment = await k8sApps.createNamespacedDeployment({namespace: namespace, body: deployManifest});
     const serviceResponse = await k8sCore.createNamespacedService({namespace: namespace, body: serviceManifest});
     const ingressResponse = await k8sNetApi.createNamespacedIngress({namespace: namespace, body: ingressManifest})
@@ -140,10 +151,215 @@ router.get("/namespace/:namespace/ingresses", async (req, res) => {
 router.post("/namespace/:namespace/delete", async (req, res) => {
   const namespace = req.params.namespace;
   try {
+    // Check if namespace exists first
+    try {
+      await k8sCore.readNamespace({name: namespace});
+    } catch (readError: any) {
+      if (readError.statusCode === 404) {
+        return res.status(404).json({error: `Namespace ${namespace} not found`});
+      }
+      throw readError;
+    }
+    
+    // Delete the namespace
     await k8sCore.deleteNamespace({name: namespace});
-    res.json({message: `Namespace ${namespace} deleted successfully`});
+    
+    // Wait for namespace to start terminating (up to 5 seconds)
+    let isTerminating = false;
+    for (let i = 0; i < 10; i++) {
+      try {
+        const ns = await k8sCore.readNamespace({name: namespace});
+        if (ns.status?.phase === 'Terminating') {
+          isTerminating = true;
+          break;
+        }
+      } catch (error: any) {
+        if (error.statusCode === 404) {
+          // Namespace already deleted
+          isTerminating = true;
+          break;
+        }
+      }
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    res.json({
+      message: `Namespace ${namespace} deletion initiated`,
+      status: isTerminating ? 'terminating' : 'pending'
+    });
   } catch (error) {
     console.error('Error deleting namespace:', error);
+    const errorMessage = (error as Error).message;
+    res.status(500).json({error: errorMessage});
+  }
+})
+
+router.get("/namespace/:namespace/deployments", async (req, res) => {
+  const namespace = req.params.namespace;
+  try {
+    const deploymentsResponse = await k8sApps.listNamespacedDeployment({namespace: namespace});
+    res.json(deploymentsResponse.items);
+  } catch (error) {
+    console.error('Error listing deployments:', error);
+    const errorMessage = (error as Error).message;
+    res.status(500).json({error: errorMessage});
+  }
+})
+
+router.get("/namespace/:namespace/deployment/:deploymentName", async (req, res) => {
+  const namespace = req.params.namespace;
+  const deploymentName = req.params.deploymentName;
+  try {
+    const deployment = await k8sApps.readNamespacedDeployment({
+      namespace: namespace,
+      name: deploymentName
+    });
+    
+    // Extract environment variables from deployment spec
+    const container = deployment.spec?.template?.spec?.containers?.[0];
+    const envVars = container?.env || [];
+    
+    // Get namespace metadata for repository URL
+    const namespaceData = await k8sCore.readNamespace({name: namespace});
+    const repositoryUrl = namespaceData.metadata?.labels?.repositoryUrl?.replace(/_/g, '/');
+    
+    res.json({
+      deployment: deployment,
+      envVars: envVars,
+      repositoryUrl: repositoryUrl ? `https://${repositoryUrl}` : null
+    });
+  } catch (error) {
+    console.error('Error fetching deployment:', error);
+    const errorMessage = (error as Error).message;
+    res.status(500).json({error: errorMessage});
+  }
+})
+
+router.patch("/namespace/:namespace/deployment/:deploymentName/env", async (req, res) => {
+  const namespace = req.params.namespace;
+  const deploymentName = req.params.deploymentName;
+  const {envVars} = req.body;
+  
+  try {
+    const parsedEnv = parseEnvVars(envVars || '');
+    const envArray = Object.entries(parsedEnv).map(([key, value]) => ({
+      name: key,
+      value: String(value)
+    }));
+    
+    // Get current deployment
+    const deployment = await k8sApps.readNamespacedDeployment({
+      namespace: namespace,
+      name: deploymentName
+    });
+    
+    // Update environment variables
+    if (deployment.spec?.template?.spec?.containers?.[0]) {
+      deployment.spec.template.spec.containers[0].env = envArray;
+    }
+    
+    // Apply the update
+    const updatedDeployment = await k8sApps.replaceNamespacedDeployment({
+      namespace: namespace,
+      name: deploymentName,
+      body: deployment
+    });
+    
+    res.json({
+      message: `Environment variables updated for deployment ${deploymentName}`,
+      deployment: updatedDeployment
+    });
+  } catch (error) {
+    console.error('Error updating deployment environment:', error);
+    const errorMessage = (error as Error).message;
+    res.status(500).json({error: errorMessage});
+  }
+})
+
+router.post("/namespace/:namespace/deployment/:deploymentName/restart", async (req, res) => {
+  const namespace = req.params.namespace;
+  const deploymentName = req.params.deploymentName;
+  
+  try {
+    // Get current deployment
+    const deployment = await k8sApps.readNamespacedDeployment({
+      namespace: namespace,
+      name: deploymentName
+    });
+    
+    // Update deployment with restart annotation
+    if (!deployment.spec?.template?.metadata?.annotations) {
+      deployment.spec!.template!.metadata = deployment.spec!.template!.metadata || {};
+      deployment.spec!.template!.metadata.annotations = {};
+    }
+    deployment.spec!.template!.metadata!.annotations!['kubectl.kubernetes.io/restartedAt'] = new Date().toISOString();
+    
+    // Apply the update
+    const updatedDeployment = await k8sApps.replaceNamespacedDeployment({
+      namespace: namespace,
+      name: deploymentName,
+      body: deployment
+    });
+    
+    res.json({
+      message: `Deployment ${deploymentName} restarted successfully`,
+      deployment: updatedDeployment
+    });
+  } catch (error) {
+    console.error('Error restarting deployment:', error);
+    const errorMessage = (error as Error).message;
+    res.status(500).json({error: errorMessage});
+  }
+})
+
+router.post("/namespace/:namespace/deployment/:deploymentName/redeploy", async (req, res) => {
+  const namespace = req.params.namespace;
+  const deploymentName = req.params.deploymentName;
+  const {repoUrl} = req.body;
+  
+  try {
+    // Get current deployment
+    const deployment = await k8sApps.readNamespacedDeployment({
+      namespace: namespace,
+      name: deploymentName
+    });
+    
+    // Update git repository URL in init container
+    const initContainers = deployment.spec?.template?.spec?.initContainers;
+    if (initContainers && initContainers.length > 0) {
+      const gitCloneContainer = initContainers.find(c => c.name === 'git-clone');
+      if (gitCloneContainer) {
+        gitCloneContainer.args = [`git clone ${repoUrl} /app`];
+      }
+    }
+    
+    // Force restart by updating annotation
+    if (!deployment.spec?.template?.metadata?.annotations) {
+      deployment.spec!.template!.metadata = deployment.spec!.template!.metadata || {};
+      deployment.spec!.template!.metadata.annotations = {};
+    }
+    deployment.spec!.template!.metadata!.annotations!['kubectl.kubernetes.io/restartedAt'] = new Date().toISOString();
+    
+    // Update namespace label with new repository URL
+    const namespaceData = await k8sCore.readNamespace({name: namespace});
+    if (namespaceData.metadata?.labels) {
+      namespaceData.metadata.labels.repositoryUrl = repoUrl.replace(/https?:\/\//, '').replace(/\//g, '_');
+      await k8sCore.replaceNamespace({name: namespace, body: namespaceData});
+    }
+    
+    // Apply the deployment update
+    const updatedDeployment = await k8sApps.replaceNamespacedDeployment({
+      namespace: namespace,
+      name: deploymentName,
+      body: deployment
+    });
+    
+    res.json({
+      message: `Deployment ${deploymentName} redeployed with new repository`,
+      deployment: updatedDeployment
+    });
+  } catch (error) {
+    console.error('Error redeploying:', error);
     const errorMessage = (error as Error).message;
     res.status(500).json({error: errorMessage});
   }

@@ -96,12 +96,10 @@ export const createIngressSpec = (serviceName: string, host: string, namespace: 
     kind: 'Ingress',
     metadata: {
       name: serviceName,
-      namespace: namespace,
-      annotations: {
-        "kubernetes.io/ingress.class": "nginx"
-      }
+      namespace: namespace
     },
     spec: {
+      ingressClassName: 'nginx',
       rules: [
         {
           host: host,

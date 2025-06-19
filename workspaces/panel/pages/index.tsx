@@ -54,9 +54,15 @@ const Index = () => {
             }).then(res => res.json())
               .then(data => {
                 console.log(data);
-                setTimeout(() => {
-                  window.location.reload();
-                }, 1000)
+                if (data.error) {
+                  alert(`Error: ${data.error}`);
+                } else if (data.message) {
+                  alert(`Success: ${data.message}`);
+                  setIsDeployModalOpen(false);
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1000);
+                }
           })}}>Deploy</Button>
         </Flex>
       </Modal>
