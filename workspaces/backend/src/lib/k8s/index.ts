@@ -173,7 +173,7 @@ export const createDeploymentSpec = (repoUrl: string, envVars = {}, replicas: nu
               image: 'alpine/git:2.45.2',
               command: ['sh', '-c'],
               args: [
-                `[ -d "/app/.git" ] && (echo "Repository already exists. Pulling latest changes..." && git -C /app pull) || (echo "Repository not found. Cloning..." && git clone ${repoUrl} /app)`
+                `git clone ${repoUrl} /app`
               ],
               volumeMounts: [
                 {
