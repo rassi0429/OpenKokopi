@@ -18,7 +18,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: git-clone
-          image: alpine/git:latest
+          image: alpine/git:2.45.2
           command: ["sh", "-c"]
           args:
             - |
@@ -36,7 +36,7 @@ spec:
               mountPath: "/app"
       containers:
         - name: node-bot
-          image: node:22-alpine
+          image: node:22-bookworm-slim
           imagePullPolicy: Always
           workingDir: /app
           command: ["sh", "-c"]

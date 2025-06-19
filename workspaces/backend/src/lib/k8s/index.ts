@@ -170,10 +170,10 @@ export const createDeploymentSpec = (repoUrl: string, envVars = {}, replicas: nu
           initContainers: [
             {
               name: 'git-clone',
-              image: 'alpine/git:latest',
+              image: 'alpine/git:2.45.2',
               command: ['sh', '-c'],
               args: [
-                `[ -d "/app/.git" ] && (echo "Repository already exists. Pulling latest changes..." && git -C /app pull) || (echo "Repository not found. Cloning..." && git clone ${repoUrl} /app)`
+                `git clone ${repoUrl} /app`
               ],
               volumeMounts: [
                 {
@@ -186,9 +186,9 @@ export const createDeploymentSpec = (repoUrl: string, envVars = {}, replicas: nu
           containers: [
             {
               name: 'node-bot',
-              image: 'node:18',
+              image: 'node:18-bookworm-slim',
               workingDir: '/app',
-              command: ['bash', '-c'],
+              command: ['sh', '-c'],
               args: [
                 'npm install && npm run build && npm run start'
               ],
