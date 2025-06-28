@@ -5,7 +5,9 @@ import {
   createServiceSpec,
   createIngressSpec,
   createNamespaceSpec,
-  createDeploymentSpec
+  createDeploymentSpec,
+  type PortConfig,
+  type HostConfig
 } from '../lib/k8s/index.js';
 
 
@@ -28,23 +30,29 @@ router.get("/", (req, res) => {
 });
 
 router.post("/deploy", async (req, res) => {
-  const {namespace} = req.body;
-  const {repoUrl} = req.body;
-  const {envVars} = req.body;
-  const {host} = req.body;
+  const {namespace, repoUrl, envVars} = req.body;
+  const ports: PortConfig[] = req.body.ports;
+  const hosts: HostConfig[] = req.body.hosts;
+  const legacyHost: string = req.body.host; // For backward compatibility
 
   const parsedEnv = parseEnvVars(envVars || '');
+  
+  // Default ports if not provided (backward compatibility)
+  const portConfigs: PortConfig[] = ports || [{ containerPort: 3000, name: 'http' }];
+  const hostConfigs: HostConfig[] = hosts || (legacyHost ? [{ hostname: legacyHost, port: 80, targetPort: 3000 }] : []);
 
   try {
-    // Check if hostname is already in use across all namespaces BEFORE creating anything
+    // Check if any hostname is already in use across all namespaces BEFORE creating anything
     const allIngresses = await k8sNetApi.listIngressForAllNamespaces();
-    const hostInUse = allIngresses.items.some(ingress => 
-      ingress.spec?.rules?.some(rule => rule.host === host)
+    const hostsInUse = hostConfigs.filter(hostConfig =>
+      allIngresses.items.some(ingress => 
+        ingress.spec?.rules?.some(rule => rule.host === hostConfig.hostname)
+      )
     );
     
-    if (hostInUse) {
+    if (hostsInUse.length > 0) {
       return res.status(400).json({
-        error: `Hostname ${host} is already in use by another application`
+        error: `Following hostnames are already in use: ${hostsInUse.map(h => h.hostname).join(', ')}`
       });
     }
 
@@ -56,9 +64,9 @@ router.post("/deploy", async (req, res) => {
     await k8sCore.createNamespace({body: k8sNamespace})
 
     // Pod用マニフェストを作成
-    const deployManifest = createDeploymentSpec(repoUrl, parsedEnv, 1, namespace);
-    const serviceManifest = createServiceSpec(deployManifest.metadata.name, 3000, namespace);
-    const ingressManifest = createIngressSpec(deployManifest.metadata.name, host, namespace)
+    const deployManifest = createDeploymentSpec(repoUrl, parsedEnv, portConfigs, 1, namespace);
+    const serviceManifest = createServiceSpec(deployManifest.metadata.name, portConfigs, namespace);
+    const ingressManifest = createIngressSpec(deployManifest.metadata.name, hostConfigs, namespace)
     
     const deployment = await k8sApps.createNamespacedDeployment({namespace: namespace, body: deployManifest});
     const serviceResponse = await k8sCore.createNamespacedService({namespace: namespace, body: serviceManifest});

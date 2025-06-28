@@ -66,7 +66,29 @@
 //   };
 // }
 
-export const createServiceSpec = (podName: string, port: number, namespace: string) => {
+// Type definitions for port and host configurations
+export type PortConfig = {
+  containerPort: number;
+  name?: string;
+  protocol?: 'TCP' | 'UDP';
+}
+
+export type HostConfig = {
+  hostname: string;
+  port: number;
+  targetPort: number;
+  path?: string;
+}
+
+export const createServiceSpec = (podName: string, ports: PortConfig[], namespace: string) => {
+  // Create service ports mapping
+  const servicePorts = ports.map((portConfig, index) => ({
+    name: portConfig.name || `port-${index}`,
+    port: 80 + index, // Service ports start from 80
+    targetPort: portConfig.containerPort,
+    protocol: portConfig.protocol || 'TCP'
+  }));
+
   return {
     apiVersion: 'v1',
     kind: 'Service',
@@ -82,14 +104,30 @@ export const createServiceSpec = (podName: string, port: number, namespace: stri
       selector: {
         app: podName
       },
-      ports: [
-        {port: 80, targetPort: port}
-      ]
+      ports: servicePorts
     }
   };
 }
 
-export const createIngressSpec = (serviceName: string, host: string, namespace: string) => {
+export const createIngressSpec = (serviceName: string, hosts: HostConfig[], namespace: string) => {
+  // Create rules for each host configuration
+  const rules = hosts.map((hostConfig, index) => ({
+    host: hostConfig.hostname,
+    http: {
+      paths: [{
+        path: hostConfig.path || "/",
+        pathType: "Prefix",
+        backend: {
+          service: {
+            name: serviceName,
+            port: {
+              number: 80 + index // Map to service port
+            }
+          }
+        }
+      }]
+    }
+  }));
 
   return {
     apiVersion: 'networking.k8s.io/v1',
@@ -100,32 +138,12 @@ export const createIngressSpec = (serviceName: string, host: string, namespace: 
     },
     spec: {
       ingressClassName: 'nginx',
-      rules: [
-        {
-          host: host,
-          "http": {
-            "paths": [
-              {
-                "path": "/",
-                "pathType": "Prefix",
-                "backend": {
-                  "service": {
-                    "name": serviceName,
-                    "port": {
-                      "number": 80
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ]
+      rules: rules
     }
   };
 }
 
-export const createDeploymentSpec = (repoUrl: string, envVars = {}, replicas: number = 1, namespace: string) => {
+export const createDeploymentSpec = (repoUrl: string, envVars = {}, ports: PortConfig[], replicas: number = 1, namespace: string) => {
   const repositoryName = repoUrl.split('/').pop()?.split('.').shift()?.toLowerCase();
   const deploymentName = `${repositoryName}-${Date.now()}`;
 
@@ -133,6 +151,13 @@ export const createDeploymentSpec = (repoUrl: string, envVars = {}, replicas: nu
   const envArray = Object.entries(envVars).map(([key, value]) => ({
     name: key,
     value: String(value)
+  }));
+
+  // Convert ports configuration to container ports
+  const containerPorts = ports.map(portConfig => ({
+    containerPort: portConfig.containerPort,
+    name: portConfig.name,
+    protocol: portConfig.protocol || 'TCP'
   }));
 
   return {
@@ -197,9 +222,7 @@ export const createDeploymentSpec = (repoUrl: string, envVars = {}, replicas: nu
                 }
               ],
               env: envArray,
-              ports: [
-                {containerPort: 3000}
-              ]
+              ports: containerPorts
             }
           ]
         }
