@@ -186,7 +186,7 @@ export const createDeploymentSpec = (repoUrl: string, envVars = {}, replicas: nu
           containers: [
             {
               name: 'node-bot',
-              image: 'node:18-bookworm-slim',
+              image: 'node:22-trixie-slim',
               workingDir: '/app',
               command: ['sh', '-c'],
               args: [
@@ -231,3 +231,4 @@ export const createNamespaceSpec = (namespace: string, metadata: NamespaceMetada
     }
   };
 };
+
