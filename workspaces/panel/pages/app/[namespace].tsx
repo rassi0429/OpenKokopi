@@ -7,7 +7,8 @@ import {HomeOutlined} from '@ant-design/icons';
 const {Header} = Layout;
 
 const NamespacePage = () => {
-  const {query} = useRouter();
+  const router = useRouter();
+  const {query} = router;
   const {namespace} = query;
 
   const [pods, setPods] = useState<Pod[]>([]);
@@ -96,10 +97,7 @@ const NamespacePage = () => {
                     .then(res => res.json())
                     .then(data => {
                       console.log(data);
-                      // TODO 本当はバックエンドが削除を待つ必要がある
-                      setTimeout(() => {
-                        window.location.reload();
-                      }, 1000);
+                      router.push('/');
                     })
                 }
               }}>Delete</Button>
