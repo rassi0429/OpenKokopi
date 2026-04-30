@@ -68,6 +68,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
 spec:
+  ingressClassName: nginx
   rules:
     - host: neorb.app
       http:

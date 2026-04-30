@@ -102,6 +102,7 @@ export const createIngressSpec = (serviceName: string, host: string, namespace: 
       }
     },
     spec: {
+      ingressClassName: "nginx",
       rules: [
         {
           host: host,
