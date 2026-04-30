@@ -29,7 +29,7 @@ spec:
                 git pull
               else
                 echo "Repository not found. Cloning..."
-                git clone https://github.com/rassi0429/miragex.app /app
+                git clone https://github.com/rassi0429/OpenKokopi /app
               fi
           volumeMounts:
             - name: "app-volume"
